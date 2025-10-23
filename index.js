@@ -18,7 +18,7 @@ for (const file of eventFiles) {
 	// For every event defined by the file
 	const filePath = path.join(eventsPath, file);
 	const eventSet = require(filePath);
-	for (const event of eventSet.event) {
+	for (const event of eventSet.events) {
 		// If the event is to happen once, do it, otherwise do it every time
 		if (event.once) {
 			client.once(event.name, (...args) => event.execute(...args));
