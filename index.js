@@ -15,6 +15,12 @@ intents.add(IntentsBitField.Flags.MessageContent);
 // Create a new client instance
 const client = new Client({ intents: intents });
 
+// Environmnt object for events to interact with
+const env = {
+    // Client for sending messages
+    client: null
+};
+
 // For every file in the events folder
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
@@ -25,9 +31,9 @@ for (const file of eventFiles) {
 	for (const event of events) {
 		// If the event is to happen once, do it, otherwise do it every time
 		if (event.once) {
-			client.once(event.name, (...args) => event.execute(...args));
+			client.once(event.name, (...args) => event.execute.apply(env, args));
 		} else {
-			client.on(event.name, (...args) => event.execute(...args));
+			client.on(event.name, (...args) => event.execute.apply(env, args));
 		}
 	}
 }

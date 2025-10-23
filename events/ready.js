@@ -8,7 +8,14 @@ module.exports = {
 			name: Events.ClientReady,
 			once: true,
 			execute(client) {
-				console.log(`Ready!\nLogged in as ${client.user.tag}`);
+                this.client = client;
+                
+                // Send online message in "general"
+				const channel = client.channels.cache.find(c => c.name == "general");
+                channel.send("Hey There!");
+                
+                // Log client info
+                console.log(`\nReady!\nLogged in as ${client.user.tag}`);
 			}
 		}
 	]

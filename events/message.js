@@ -5,10 +5,14 @@ module.exports = {
 			name: "messageCreate",
 			once: false,
 			async execute(message) {
+                // Don't respond to bots
 				if (message.author.bot) return;
-
+				
+                // Reply to message
+                await message.reply(`You said "${message.content}"`);
+                
+                // Log message info
 				console.log(`Read Message: "${message.content}"`);
-                await message.reply("Read This")
 			}
 		}
 	]
