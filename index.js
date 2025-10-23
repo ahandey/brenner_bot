@@ -3,8 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 // Require the necessary discord.js classes
-const { Client, IntentsBitField, Collection, REST } = require('discord.js');
-const { token, clientId } = require('./config.json');
+const { Client, IntentsBitField, Collection, REST, Routes } = require('discord.js');
+const { token, clientId, guildId } = require('./config.json');
 
 // Create an IntentBitField to keep track of intents
 const intents = new IntentsBitField();
@@ -54,10 +54,13 @@ const rest = new REST().setToken(token);
 // and deploy commands
 (async () => {
 	try {
-		console.log(`Started refreshing ${env.commands.length} application (/) commands.`);
+        // get commands
+        const commands = Array.from(env.commands.values()).map(command => command.data.toJSON());
+        
+		console.log(`Started refreshing ${commands.length} guild (/) commands.`);
 		// The put method is used to fully refresh all commands in the guild with the current set
-		const data = await rest.put(Routes.applicationCommands(clientId), { body: env.commands });
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
+		console.log(`Successfully reloaded ${data.length} guild (/) commands.`);
 	} catch (error) {
 		// Catch and log errors
 		console.error(error);
