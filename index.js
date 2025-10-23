@@ -3,8 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 // Require the necessary discord.js classes
-const { Client, IntentsBitField, Collection } = require('discord.js');
-const { token } = require('./config.json');
+const { Client, IntentsBitField, Collection, REST } = require('discord.js');
+const { token, clientId } = require('./config.json');
 
 // Create an IntentBitField to keep track of intents
 const intents = new IntentsBitField();
@@ -34,7 +34,11 @@ for (const folder of commandFolders) {
 	for (const file of commandFiles) {
 		// Add the command defined by the file
 		const filePath = path.join(commandsPath, file);
+		
+		// Delete the cache & load the file
+		delete require.cache[require.resolve(filePath)];
 		const command = require(filePath);
+
 		// Set a new item in the Collection with the key as the command name and the value as the exported module
 		if ('data' in command && 'execute' in command) {
 			env.commands.set(command.data.name, command);
@@ -43,6 +47,22 @@ for (const folder of commandFolders) {
 		}
 	}
 }
+
+// Reload commands through Discord API
+// Construct and prepare an instance of the REST module
+const rest = new REST().setToken(token);
+// and deploy commands
+(async () => {
+	try {
+		console.log(`Started refreshing ${env.commands.length} application (/) commands.`);
+		// The put method is used to fully refresh all commands in the guild with the current set
+		const data = await rest.put(Routes.applicationCommands(clientId), { body: env.commands });
+		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+	} catch (error) {
+		// Catch and log errors
+		console.error(error);
+	}
+})();
 
 // For every .js file in the events folder
 const eventsPath = path.join(__dirname, 'events');
