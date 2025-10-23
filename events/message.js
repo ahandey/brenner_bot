@@ -5,10 +5,12 @@ const { Events } = require('discord.js');
 module.exports = {
 	events: [
 		{
-			name: Events.InteractionCreate,
+			name: Events.MessageCreate,
 			once: false,
-			execute(interaction) {
-				console.log("interaction");
+			execute(message) {
+				if (message.author.bot) return;
+
+				console.log(`Read Message: "${message.content}"`);
 			}
 		}
 	]
