@@ -6,6 +6,6 @@ module.exports = {
 	name: Events.InteractionCreate,
     once: false,
 	execute(interaction) {
-		console.log(interaction);
+		console.log("interaction");
 	},
 };
