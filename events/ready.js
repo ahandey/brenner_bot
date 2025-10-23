@@ -1,3 +1,4 @@
+// Require the necessary discord.js classes
 const { Events } = require('discord.js');
 
 // When the client is ready, run this code (only once).
