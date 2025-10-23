@@ -1,4 +1,5 @@
 // File and path information (node.js)
+const fs = require('node:fs');
 const path = require('node:path');
 
 // Require the necessary discord.js classes
