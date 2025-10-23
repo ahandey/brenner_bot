@@ -1,4 +1,4 @@
-// When interacted with, run this code (always)
+// When message is recieved, run this code (always)
 module.exports = {
 	events: [
 		{
