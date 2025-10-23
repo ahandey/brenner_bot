@@ -1,16 +1,14 @@
-// Require the necessary discord.js classes
-const { Events } = require('discord.js');
-
 // When interacted with, run this code (always)
 module.exports = {
 	events: [
 		{
-			name: Events.MessageCreate,
+			name: "messageCreate",
 			once: false,
-			execute(message) {
+			async execute(message) {
 				if (message.author.bot) return;
 
 				console.log(`Read Message: "${message.content}"`);
+                await message.reply("Read This")
 			}
 		}
 	]
