@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 // /echo input
 module.exports = {
@@ -18,9 +18,15 @@ module.exports = {
         const input = interaction.options.getString("input");
 
         // Send response
-        await interaction.channel.send(input);
+        interaction.channel.send(input);
+
+        // Make ephemeral reply to user to indicate success
+        interaction.reply({
+            content: `Echo-ing: ${input}`,
+            flags: MessageFlags.Ephemeral
+        });
 
         // Log interaction
-        console.log(`Echo: "${input}"`);
+        console.log(`/echo input="${input}"`);
     }
 };
