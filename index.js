@@ -24,27 +24,24 @@ const env = {
 	commands: new Collection()
 };
 
-// For every folder in the commands folder
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
-for (const folder of commandFolders) {
-	// For every .js file in the folder
-	const commandsPath = path.join(foldersPath, folder);
-	const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-	for (const file of commandFiles) {
-		// Add the command defined by the file
-		const filePath = path.join(commandsPath, file);
-		
-		// Delete the cache & load the file
-		delete require.cache[require.resolve(filePath)];
-		const command = require(filePath);
+// Add behaviors (commands and actions)
+// For every .js file in the behavior folder
+const behaviorPath = path.join(__dirname, 'behavior');
+const behaviorFiles = fs.readdirSync(behaviorPath).filter((file) => file.endsWith('.js'));
+for (const file of behaviorFiles) {
+	// Get the commands and actions defined by the file
+	const filePath = path.join(behaviorPath, file);
+	const { commands, actions } = require(filePath);
 
-		// Set a new item in the Collection with the key as the command name and the value as the exported module
-		if ('data' in command && 'execute' in command) {
-			env.commands.set(command.data.name, command);
-		} else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-		}
+	// Add the commands
+	for (const command of commands) {
+		env.commands.set(command.name, command);
+	}
+
+	// Add the actions
+	for (const action of actions) {
+		// If the action is to happen once, do it, otherwise do it every time
+		client[action.isOnce?"once":"on"](action.trigger, (...args) => action.execute.apply(env, args));
 	}
 }
 
@@ -66,23 +63,6 @@ const rest = new REST().setToken(token);
 		console.error(error);
 	}
 })();
-
-// For every .js file in the events folder
-const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
-for (const file of eventFiles) {
-	// For every event defined by the file
-	const filePath = path.join(eventsPath, file);
-	const { events } = require(filePath);
-	for (const event of events) {
-		// If the event is to happen once, do it, otherwise do it every time
-		if (event.once) {
-			client.once(event.name, (...args) => event.execute.apply(env, args));
-		} else {
-			client.on(event.name, (...args) => event.execute.apply(env, args));
-		}
-	}
-}
 
 // Log in to Discord with your client's token
 client.login(token);
