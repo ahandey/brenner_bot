@@ -13,7 +13,8 @@ module.exports = {
 				
 				// Check for forum messages
                 // If it's not a guild thread, return
-                switch (message.channel.type) {
+                const channel = message.channel;
+				switch (channel.type) {
 					default:
 						return;
 
@@ -27,10 +28,10 @@ module.exports = {
 				if (!parent || parent.type != ChannelType.GuildForum) return;
                 
 				// Reply
-				message.channel.send(`Testing: "${message.content}"`);
+				channel.send(`Testing: "${message.content}"`);
 
                 // Log message info
-				console.log(`Forum message "${message.content}" in thread ${message.channel.name}`);
+				console.log(`Forum message "${message.content}" in thread ${channel.name}`);
 			}
 		}
 	]
