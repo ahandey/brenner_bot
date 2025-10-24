@@ -9,7 +9,7 @@ module.exports = {
 				if (message.author.bot) return;
 				
                 // Reply to message
-                await message.reply(`You said "${message.content}"`);
+                await message.reply(`Channel Type: `+message.channel.type);
                 
                 // Log message info
 				console.log(`Read Message: "${message.content}"`);
