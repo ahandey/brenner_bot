@@ -41,7 +41,7 @@ for (const file of behaviorFiles) {
 	// Add the actions
 	for (const action of actions) {
 		// If the action is to happen once, do it, otherwise do it every time
-		client[action.isOnce?"once":"on"](action.trigger, (...args) => action.execute.apply(env, args));
+		client[action.isOnce?"once":"on"](action.trigger, (...args) => action.execute(env, args));
 	}
 }
 

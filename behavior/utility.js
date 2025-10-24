@@ -1,5 +1,5 @@
 // Require necessary discord.js classes
-const { MessageFlags } = require("discord.js");
+const { Events, MessageFlags } = require("discord.js");
 // Require helper classes
 const { Command, Action } = require("./../helper.js");
 
@@ -7,14 +7,15 @@ const commands = [
     // /echo input:string
     new Command(
         "echo",
+        "Repeats the given input in the given channel",
         [
-            {name: "input", type: "string"}
+            {name: "input", type: "string", description: "The text to repeat"}
         ],
         [
             // No optional arguments
         ],
         // when called
-        async function excecute (args, kwargs) {
+        async function excecute(call, args, kwargs) {
             // Get input argument
             const input = args.input;
 
@@ -38,7 +39,7 @@ const actions = [
     new Action(
         // When ready
         Events.ClientReady,
-        async function (interaction) {
+        async function (client) {
             // Remember the client
             this.client = client;
             
@@ -66,7 +67,7 @@ const actions = [
 
             try {
                 // Run the command
-                await command.execute.apply(this, [interaction]);
+                return await command.execute(this, interaction);
             } catch (error) {
                 console.error(error);
 
@@ -82,6 +83,7 @@ const actions = [
                         flags: MessageFlags.Ephemeral,
                     });
                 }
+                return;
             }
         }
     )

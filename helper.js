@@ -17,53 +17,49 @@ class Command {
         this.data.setDescription(desc);
         for (const arg of args) {
             arg.type = makeCamel(arg.type);
-            this.data[`add${arg.type}Option`]((option) => {
-                option.setName(arg.name);
-                option.setDescription(arg.description);
-                option.setRequired(true);
-            });
+            this.data[`add${arg.type}Option`]((option) => option
+                .setName(arg.name)
+                .setDescription(arg.description)
+                .setRequired(true)
+            );
         }
         
         for (const arg of krgs) {
             arg.type = makeCamel(arg.type);
-            this.data[`add${arg.type}Option`]((option) => {
-                option.setName(arg.name);
-                option.setDescription(arg.description);
-                option.setRequired(false);
-            });
+            this.data[`add${arg.type}Option`]((option) => option
+                .setName(arg.name)
+                .setDescription(arg.description)
+                .setRequired(false)
+            );
         }
     }
 
     get name() {return this.#create.name;}
 
-    async execute(interaction) {
+    async execute(env, interaction) {
         const args = {};
-        for (const arg of this.#create.args)
-            args[arg.name] = interaction[`get${arg.type}`](arg.name);
+        for (const arg of this.#create.args) 
+            args[arg.name] = interaction.options[`get${arg.type}`](arg.name);
 
         const krgs = {};
         for (const arg of this.#create.krgs)
-            krgs[arg.name] = interaction[`get${arg.type}`](arg.name);
+            krgs[arg.name] = interaction.options[`get${arg.type}`](arg.name);
 
-        this.func(args, krgs);
+        return await this.func.apply(env, [interaction, args, krgs]);
     }
 }
 
 class Action {
     #trigger = Events.ClientReady;
-    #once = true;
-    #exec = null;
+    #once = false;
 
-    constructor(trigger, exec) {
+    constructor(trigger, func) {
         this.#trigger = trigger;
-        this.#exec = exec;
+        this.func = func;
     }
 
     get trigger() {return this.#trigger;}
     get isOnce() {return this.#once;}
-    async execute(...args) {
-        return await this.#exec(...args);
-    }
 
     once() {
         this.#once = true;
@@ -72,6 +68,10 @@ class Action {
     always() {
         this.#once = false;
         return this;
+    }
+    
+    async execute(env, args) {
+        return await this.func.apply(env, args);
     }
 }
 
