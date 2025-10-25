@@ -1,13 +1,13 @@
 {
-  "name": "fps-nodejs-bot",
+  "name": "brenner_bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "LHS Math Team Discord Bot",
   "main": "index.js",
   "scripts": {
     "setup": "npm install",
     "start": "npm update && node ."
   },
-  "author": "",
+  "author": "Ahanaditya Dey",
   "license": "ISC",
   "dependencies": {
     "discord.js": "latest",
