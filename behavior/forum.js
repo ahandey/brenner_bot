@@ -32,7 +32,7 @@ const actions = [
             channel.send(`Testing: "${message.content}"`);
 
             // Log message info
-            console.log(`Forum message "${message.content}" in thread ${channel.name}`);
+            console.log(`Forum message "${message.content}" in thread "${channel.name}"`);
         }
     )
 ];
