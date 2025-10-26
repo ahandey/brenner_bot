@@ -38,6 +38,7 @@ class MessageField {
     #channel = null;
     #typing = false;
     #sendArgs = null;
+    #promise = null;
 
     constructor(channel) {
         this.#channel = channel;
@@ -45,19 +46,21 @@ class MessageField {
 
     startTyping() {
         this.#typing = true;
-        Async.loopUntil(
+        this.#promise = Async.loopUntil(
             () => this.#channel.sendTyping(),
             () => !this.#typing,
             5000
         ).then(() => {
-            this.#channel.send(this.#sendArgs);
+            this.#channel.send(...this.#sendArgs);
             this.#sendArgs = null;
+            this.#promise = null;
         });
     }
 
     send(...args) {
         this.#sendArgs = args;
         this.#typing = false;
+        return this.#promise;
     }
 }
 
