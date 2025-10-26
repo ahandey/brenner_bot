@@ -21,8 +21,8 @@ const actions = [
                 default:
                     return;
 
-                case ChannelType.GuildPublicThread:
-                case ChannelType.GuildPrivateThread:
+                case ChannelType.PublicThread:
+                case ChannelType.PrivateThread:
                     break;
             }
             // If there's no parent or the parent is not the bot's forum, return
