@@ -28,14 +28,17 @@ const actions = [
             // If there's no parent or the parent is not the bot's forum, return
             if (channel.parentId != forumId) return;
             
+            // Log message info
+            console.log(`Recieved message "${message.content}" in thread "${channel.name}"`);
+
             // Reply
             const messageField = new MessageField(channel);
             messageField.startTyping();
             await Async.wait(15000);
             messageField.send("I see you");
 
-            // Log message info
-            console.log(`Forum message "${message.content}" in thread "${channel.name}"`);
+            // Log message send info
+            console.log(`Replied to "${message.content}" in thread "${channel.name}" in ${messageField.time} ms`);
         }
     )
 ];

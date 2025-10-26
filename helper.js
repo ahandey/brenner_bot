@@ -18,14 +18,14 @@ class Async {
 
     static waitUntil(condition, ms=0) {
         return new Promise(async (resolve) => {
-            while (!condition()) await (ms==0)?0:this.wait(ms);
+            while (! await condition()) await (ms==0)?0:this.wait(ms);
             resolve();
         });
     }
 
     static loopUntil(code, condition, ms=0) {
         return new Promise(async (resolve) => {
-            while (!condition()) {
+            while (! await condition()) {
                 await code();
                 await (ms==0)?0:this.wait(ms);
             }
@@ -39,6 +39,7 @@ class MessageField {
     #typing = false;
     #sendArgs = null;
     #promise = null;
+    #time = 0;
 
     constructor(channel) {
         this.#channel = channel;
@@ -49,12 +50,14 @@ class MessageField {
         this.#promise = Async.loopUntil(
             () => this.#channel.sendTyping(),
             () => !this.#typing,
-            5000
-        ).then(() => {
-            this.#channel.send(...this.#sendArgs);
+            1000
+        ).then(async () => {
+            await this.#channel.send(...this.#sendArgs);
+            this.#time -= Date.now();
             this.#sendArgs = null;
             this.#promise = null;
         });
+        this.#time = Date.now();
     }
 
     send(...args) {
