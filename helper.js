@@ -45,7 +45,7 @@ class MessageField {
 
     startTyping() {
         this.#typing = true;
-        Async.loopUntilUntil(
+        Async.loopUntil(
             () => this.#channel.sendTyping(),
             () => !this.#typing,
             5000
