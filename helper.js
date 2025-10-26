@@ -65,6 +65,8 @@ class MessageField {
         this.#typing = false;
         return this.#promise;
     }
+
+    get time() {return this.#time;}
 }
 
 class Command {
