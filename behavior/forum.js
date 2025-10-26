@@ -1,7 +1,7 @@
 // Require the necessary discord.js classes
 const { Events, ChannelType } = require("discord.js");
 // Require helper classes
-const { Action } = require("./../helper.js");
+const { Action, MessageField, Async } = require("./../helper.js");
 // Require config data
 const { forumId } = require("./../config.json");
 
@@ -29,8 +29,10 @@ const actions = [
             if (channel.parentId != forumId) return;
             
             // Reply
-            console.log(channel.testField);
-            channel.send(`I see you"`);
+            const messageField = new MessageField();
+            messageField.startTyping();
+            await Async.wait(15000);
+            messageField.send(`I see you"`);
 
             // Log message info
             console.log(`Forum message "${message.content}" in thread "${channel.name}"`);
