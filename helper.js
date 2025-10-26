@@ -38,6 +38,7 @@ class Async {
 class MessageField {
     #channel = null;
     #typing = false;
+    #sendArgs = null;
 
     constructor(channel) {
         this.#channel = channel;
@@ -49,12 +50,15 @@ class MessageField {
             () => this.#channel.sendTyping(),
             () => !this.#typing,
             5000
-        );
+        ).then(() => {
+            this.#channel.send(this.#sendArgs);
+            this.#sendArgs = null;
+        });
     }
 
     send(...args) {
+        this.#sendArgs = args;
         this.#typing = false;
-        this.#channel.send(...args);
     }
 }
 
