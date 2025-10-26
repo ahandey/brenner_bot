@@ -1,9 +1,28 @@
 // require necessary discord.js classes
-const { SlashCommandBuilder, Events } = require("discord.js");
+const { Channel, SlashCommandBuilder, Events } = require("discord.js");
 
 function makeCamel(name) {
     return name.charAt(0).toUpperCase()+name.substring(1).toLowerCase();
 }
+
+class Utility {
+    Async = class Async {
+        wait(ms) {
+            return new Promise((resolve) => {
+                setTimeout(resolve, ms);
+            });
+        }
+
+        waitUntil(f, ms=0) {
+            return new Promise(async (resolve) => {
+                while (!f()) await (ms==0)?0:this.wait(ms);
+                resolve();
+            });
+        }
+    }
+}
+
+Channel.prototype.testField = "Hello Channel testField";
 
 class Command {
     #create = null;
@@ -75,4 +94,4 @@ class Action {
     }
 }
 
-module.exports = { Command, Action };
+module.exports = { Command, Action, Utility };

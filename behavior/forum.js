@@ -29,7 +29,8 @@ const actions = [
             if (channel.parentId != forumId) return;
             
             // Reply
-            channel.send(`Testing: "${message.content}"`);
+            console.log(channel.testField);
+            channel.send(`I see you"`);
 
             // Log message info
             console.log(`Forum message "${message.content}" in thread "${channel.name}"`);
