@@ -25,7 +25,6 @@ class Async {
 
     static loopUntil(code, condition, ms=0) {
         return new Promise(async (resolve) => {
-            await code();
             while (!condition()) {
                 await code();
                 await (ms==0)?0:this.wait(ms);
