@@ -29,10 +29,10 @@ const actions = [
             if (channel.parentId != forumId) return;
             
             // Reply
-            const messageField = new MessageField();
+            const messageField = new MessageField(channel);
             messageField.startTyping();
             await Async.wait(15000);
-            messageField.send(`I see you"`);
+            messageField.send("I see you");
 
             // Log message info
             console.log(`Forum message "${message.content}" in thread "${channel.name}"`);
