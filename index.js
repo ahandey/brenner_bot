@@ -54,7 +54,7 @@ const rest = new REST().setToken(token);
         // get commands
         const commands = Array.from(env.commands.values()).map(command => command.data.toJSON());
         
-		console.log(`Started refreshing ${commands.length} guild (/) commands.`);
+		console.log(`\nStarted refreshing ${commands.length} guild (/) commands.`);
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
 		console.log(`Successfully reloaded ${data.length} guild (/) commands.`);

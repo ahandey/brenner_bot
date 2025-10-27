@@ -43,8 +43,9 @@ const actions = [
             // Remember the client
             this.client = client;
             
-            // Log client info
-            console.log(`\nReady!\nLogged in as ${client.user.tag}`);
+            // Start Server Log
+            console.clear();
+            console.log(`Logged in as ${client.user.tag}`);
         }
     ).once() // Only run once
     ,

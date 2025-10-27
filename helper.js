@@ -47,17 +47,17 @@ class MessageField {
 
     startTyping() {
         this.#typing = true;
+        this.#time = Date.now();
         this.#promise = Async.loopUntil(
             () => this.#channel.sendTyping(),
             () => !this.#typing,
             1000
         ).then(async () => {
             await this.#channel.send(...this.#sendArgs);
-            this.#time -= Date.now();
+            this.#time = Date.now()-this.#time;
             this.#sendArgs = null;
             this.#promise = null;
         });
-        this.#time = Date.now();
     }
 
     send(...args) {

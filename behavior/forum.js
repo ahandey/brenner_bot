@@ -35,10 +35,10 @@ const actions = [
             const messageField = new MessageField(channel);
             messageField.startTyping();
             await Async.wait(15000);
-            messageField.send("I see you");
+            await messageField.send("I see you");
 
             // Log message send info
-            console.log(`Replied to "${message.content}" in thread "${channel.name}" in ${messageField.time} ms`);
+            console.log(`Replied to "${message.content}" in thread "${channel.name}" in ${messageField.time/1000} s`);
         }
     )
 ];
