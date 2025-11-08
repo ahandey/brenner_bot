@@ -4,8 +4,9 @@ const { Events, MessageFlags } = require("discord.js");
 const { Command, Action } = require("./../helper.js");
 
 const commands = [
-    // /echo input:string
+    // [Slash Command]: /echo input:string
     new Command(
+        Command.Type.SLASH,
         "echo",
         "Repeats the given input in the given channel",
         [
@@ -31,6 +32,29 @@ const commands = [
             // Log interaction
             console.log(`/echo input="${input}"`);
         }
+    ),
+
+    // [Message Context Menu Command]: cat
+    new Command(
+        Command.Type.MESSAGE_CONTEXT_MENU,
+        "cat",
+        "", [], [],
+        async function execute(call) {
+            // Get message text
+            const value = call.targetMessage.content;
+
+            // Start "typing" ephemeral reply
+            await call.deferReply({ flags: MessageFlags.Ephemeral })
+
+            // Send response
+            await call.channel.send(value);
+
+            // Send reply to user to indicate success
+            await call.editReply(`Cat-ed: ${value}`);
+
+            // Log interaction
+            console.log(`cat "${value}"`);
+        }
     )
 ];
 
@@ -54,15 +78,12 @@ const actions = [
         // Trigger when interaction created
         Events.InteractionCreate,
         async function (interaction) {
-            // If it's not a command, return
-            if (!interaction.isChatInputCommand()) return;
-            
-            // Find the command in the command list
+            // Find the command in the command map
             const command = this.commands.get(interaction.commandName);
 
             // If no command is found, log an error and return
             if (!command) {
-                console.error(`No command with name "/${interaction.commandName}"`);
+                console.error(`No command with name "${interaction.commandName}"`);
                 return;
             }
 

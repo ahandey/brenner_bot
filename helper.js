@@ -1,5 +1,10 @@
 // require necessary discord.js classes
-const { SlashCommandBuilder, Events } = require("discord.js");
+const {
+    SlashCommandBuilder,
+    ContextMenuCommandBuilder,
+    ApplicationCommandType,
+    Events
+} = require("discord.js");
 
 function makeCamel(name) {
     return name.charAt(0).toUpperCase()+name.substring(1).toLowerCase();
@@ -70,37 +75,66 @@ class MessageField {
 }
 
 class Command {
-    #create = null;
+    static Type = {
+        SLASH               : 0,
+        MESSAGE_CONTEXT_MENU: 1
+    };
 
-    constructor(name, desc, args, krgs, func) {
-        this.#create = { name, desc, args, krgs };
+    #create = null;
+    constructor(type, name, desc, args, krgs, func) {
+        this.#create = { type, name, desc, args, krgs };
         this.func = func;
 
-        this.data = new SlashCommandBuilder();
-        this.data.setName(name);
-        this.data.setDescription(desc);
-        for (const arg of args) {
-            arg.type = makeCamel(arg.type);
-            this.data[`add${arg.type}Option`]((option) => option
-                .setName(arg.name)
-                .setDescription(arg.description)
-                .setRequired(true)
-            );
-        }
-        
-        for (const arg of krgs) {
-            arg.type = makeCamel(arg.type);
-            this.data[`add${arg.type}Option`]((option) => option
-                .setName(arg.name)
-                .setDescription(arg.description)
-                .setRequired(false)
-            );
+        switch (type) {
+            default: 
+                throw new Error(`Couldn't create command "${name}" of invalid type ${type}`);
+
+            case Command.Type.SLASH:
+                this.data = new SlashCommandBuilder()
+                    .setName(name)
+                    .setDescription(desc);
+                
+                for (const arg of args) {
+                    arg.type = makeCamel(arg.type);
+                    this.data[`add${arg.type}Option`]((option) => option
+                        .setName(arg.name)
+                        .setDescription(arg.description)
+                        .setRequired(true)
+                    );
+                }
+                
+                for (const arg of krgs) {
+                    arg.type = makeCamel(arg.type);
+                    this.data[`add${arg.type}Option`]((option) => option
+                        .setName(arg.name)
+                        .setDescription(arg.description)
+                        .setRequired(false)
+                    );
+                }
+                break;
+            
+            case Command.Type.MESSAGE_CONTEXT_MENU:
+                this.data = new ContextMenuCommandBuilder()
+                    .setName(name)
+                    .setType(ApplicationCommandType.Message);
+                
+                this.#create.desc = [];
+                this.#create.args = [];
+                this.#create.krgs = [];
         }
     }
 
+    get type() {return this.#create.type;}
     get name() {return this.#create.name;}
 
     async execute(env, interaction) {
+        if (
+            (this.type == Command.Type.SLASH               ) && !interaction.isChatInputCommand         () ||
+            (this.type == Command.Type.MESSAGE_CONTEXT_MENU) && !interaction.isMessageContextMenuCommand()
+        ) {
+            throw new Error(`Command "${this.name}" called in the wrong context`);
+        }
+
         const args = {};
         for (const arg of this.#create.args) 
             args[arg.name] = interaction.options[`get${arg.type}`](arg.name);
